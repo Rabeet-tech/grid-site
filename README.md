@@ -3,7 +3,7 @@
 Your design (`static/index.html`) plus a small FastAPI backend. The page works without the API (it just shows the placeholder cards), and lights up when the API is there.
 
 Dark mode: toggle in the nav (half-circle icon). It starts from the visitor's system setting and remembers their choice (`localStorage` key `grid-theme`). Colours live in the `:root[data-theme="dark"]` block at the top of the CSS.
-
+ new
 ## Run it
 
 ```bash

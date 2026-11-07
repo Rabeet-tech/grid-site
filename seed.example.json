@@ -1,0 +1,34 @@
+{
+  "settings": {
+    "applications_open": true,
+    "applications_label": "Applications open",
+    "handle": "@your_handle",
+    "contact_email": "grid@example.com"
+  },
+  "members": [
+    {
+      "name": "Full Name",
+      "team": "software",
+      "role": "Team lead",
+      "dept": "Computer Science, 2024",
+      "links": { "github": "https://github.com/your-username", "linkedin": "https://www.linkedin.com/in/your-username" },
+      "sort": 0
+    },
+    {
+      "name": "Another Name",
+      "team": "rnd",
+      "role": "Member",
+      "dept": "Electrical Engineering, 2024",
+      "sort": 10
+    }
+  ],
+  "log": [
+    {
+      "date": "2026-11-01",
+      "kind": "Project",
+      "title": "Describe the milestone",
+      "result_label": "Repo",
+      "result_url": "https://github.com/your-org/your-repo"
+    }
+  ]
+}

@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>G.R.I.D NUST PNEC</title>
+<meta name="description" content="G.R.I.D (Group of Research, Innovation and Development) is a student society at NUST PNEC for people who research, code and ship. Open to every department.">
+<meta name="theme-color" content="#c9cbcd">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<script>
+// Set the theme before first paint so dark-mode visitors don't see a light flash.
+(function(){try{var t=localStorage.getItem('grid-theme');if(t!=='dark'&&t!=='light')t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';document.documentElement.dataset.theme=t;var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==='dark'?'#121314':'#c9cbcd';}catch(e){}})();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;700;800;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: one bordered engineering "sheet" on graph paper, divided into numbered sheets 00–05 by hard rules. */
+:root{
+  --paper:#c9cbcd;      /* graph-paper ground */
+  --grid-line:rgba(20,20,20,.07);
+  --sheet:#d3d5d7;      /* sheet surface */
+  --panel:#e4e5e6;      /* light panel / inputs */
+  --ink:#0d0d0d;
+  --ink-soft:#3a3b3d;
+  --rule:#8e9194;
+  --orange:#e8641c;
+  --orange-ink:#0d0d0d;
+  --black:#0d0d0d;
+  --black-fg:#eceae4;
+  --display:"Big Shoulders Display","Oswald","Arial Narrow",Impact,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --placeholder:#5f6062;
+  color-scheme:light;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+/* Dark mode: same sheet, inverted ground. Toggle sits in the nav; follows the system setting until a choice is saved. */
+:root[data-theme="dark"]{
+  --paper:#121314;
+  --grid-line:rgba(236,234,228,.05);
+  --sheet:#1a1b1d;
+  --panel:#242628;
+  --ink:#eceae4;
+  --ink-soft:#a3a29d;
+  --rule:#4b4e52;
+  --black:#08090a;
+  --placeholder:#8f9296;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]:not([hidden=until-found i]){display:none!important}
+img{max-width:100%}
+html{scroll-behavior:smooth;scroll-padding-top:env(safe-area-inset-top,0px)}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+body{
+  margin:0;
+  background:var(--paper);
+  background-image:
+    linear-gradient(var(--grid-line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid-line) 1px,transparent 1px);
+  background-size:24px 24px;
+  color:var(--ink);
+  font-family:var(--mono);
+  font-size:13px;
+  line-height:1.6;
+}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.wrap{
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:28px 64px;
+}
+.sheet{max-width:1100px;margin:0 auto;border:1px solid var(--rule);background:var(--sheet)}
+.label{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft)}
+.display{font-family:var(--display);font-weight:800;text-transform:uppercase;line-height:.86;letter-spacing:-.005em;text-wrap:balance;margin:0}
+
+/* ---------- NAV ---------- */
+.nav{display:flex;align-items:stretch;border-bottom:1px solid var(--rule);min-height:64px;position:relative}
+.nav .brand{display:flex;align-items:center;padding:0 22px;border-right:1px solid var(--rule)}
+.logo{display:block;height:30px;aspect-ratio:660/179;width:auto;max-width:100%}
+.nav .tag{display:flex;align-items:center;padding:0 22px;font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+.nav .links{margin-left:auto;display:flex}
+.nav .links > a,.nav .links summary{display:flex;align-items:center;gap:6px;padding:0 20px;border-left:1px solid var(--rule);font-size:10px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;cursor:pointer;list-style:none;height:100%}
+.nav .links summary::-webkit-details-marker{display:none}
+.nav .links > a:hover,.nav .links summary:hover{background:var(--panel)}
+.nav .links > button{display:flex;align-items:center;justify-content:center;height:100%;padding:0 18px;background:transparent;color:inherit;border:0;border-left:1px solid var(--rule);border-radius:0;cursor:pointer}
+.nav .links > button:hover{background:var(--panel)}
+.nav .links > button svg{display:block}
+.nav details{position:relative}
+.nav details[open] summary{background:var(--panel)}
+.nav details .menu{position:absolute;top:100%;left:-1px;min-width:220px;background:var(--panel);border:1px solid var(--rule);z-index:5;display:grid}
+.nav details .menu a{padding:12px 16px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border-top:1px solid var(--rule)}
+.nav details .menu a:first-child{border-top:0}
+.nav details .menu a:hover{background:var(--orange);color:var(--orange-ink)}
+.nav .join{background:var(--orange);color:var(--orange-ink);font-family:var(--display)!important;font-weight:800;font-size:20px!important;letter-spacing:.02em!important;padding:0 32px!important}
+.nav .join:hover{background:var(--black)!important;color:var(--black-fg)}
+.caret{font-size:8px}
+
+/* ---------- HERO ---------- */
+.hero{padding:26px 36px 34px;border-bottom:1px solid var(--rule)}
+.hero .meta{display:flex;justify-content:space-between}
+.hero h1{font-size:clamp(44px,8.4vw,96px);margin-top:18px}
+.hero .intro{margin:22px 0 0;font-size:15px;line-height:1.5}
+.hero h1 .ship{background:var(--orange);color:var(--orange-ink);padding:.06em .12em 0;line-height:.9;display:inline-block}
+.ruler{position:relative;margin-top:30px;height:14px}
+.ruler::before{content:"";position:absolute;left:0;right:0;top:6px;border-top:1px solid var(--ink-soft)}
+.ruler i{position:absolute;top:0;width:1px;height:14px;background:var(--ink-soft)}
+.ruler i:first-child{left:0}.ruler i:last-child{right:0}
+.ruler span{position:absolute;left:50%;top:-1px;transform:translateX(-50%);background:var(--sheet);padding:0 10px;font-size:9px;letter-spacing:.2em}
+
+/* ---------- INTRO STRIP ---------- */
+.strip{display:flex;flex-wrap:wrap;border-bottom:1px solid var(--rule)}
+.strip .ctas{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:18px 36px;flex:1 1 auto}
+.btn{display:inline-block;text-align:center;padding:10px 14px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:1px solid var(--ink-soft);background:var(--panel);transition:background .15s,color .15s}
+.btn:hover{background:var(--black);color:var(--black-fg)}
+.btn.primary{background:var(--orange);border-color:var(--orange);color:var(--orange-ink)}
+.btn.primary:hover{background:var(--black);border-color:var(--black);color:var(--black-fg)}
+.strip .badge{display:flex;align-items:center;gap:14px;padding:18px 36px;background:var(--black);color:var(--black-fg)}
+.strip .badge .label{color:var(--orange);white-space:nowrap}
+.strip .badge .display{font-size:26px;line-height:1;color:var(--black-fg)}
+
+/* ---------- ABOUT ---------- */
+.about{display:grid;grid-template-columns:.75fr 1.25fr;border-bottom:1px solid var(--rule)}
+.about > *{padding:34px 36px 44px;min-width:0}
+.about .left{border-right:1px solid var(--rule)}
+.about .left .display{font-size:clamp(40px,4.8vw,54px)}
+.about .lede{font-family:var(--display);font-weight:700;font-size:clamp(22px,2.6vw,30px);line-height:1;text-transform:uppercase;margin:0 0 26px;text-wrap:pretty}
+.specs{margin:0;border-top:1px solid var(--ink-soft)}
+.specs > div{display:grid;grid-template-columns:.75fr 1.25fr;gap:16px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--ink-soft)}
+.specs dt{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.specs dd{margin:0;font-family:var(--display);font-weight:700;font-size:19px;line-height:1.05;text-transform:uppercase}
+
+/* ---------- SECTION HEAD ---------- */
+.shead{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;padding:26px 36px 14px;border-bottom:1px solid var(--rule)}
+.shead .display{font-size:clamp(34px,4.4vw,48px)}
+.shead .label{padding-bottom:12px}
+
+/* ---------- TEAMS ---------- */
+.teams{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--rule)}
+.team{padding:22px 24px 26px;display:flex;flex-direction:column;min-height:420px;min-width:0}
+.team.t1{background:var(--black);color:var(--black-fg)}
+.team.t2{background:var(--orange);color:var(--orange-ink)}
+.team.t3{background:var(--panel)}
+.team .num{font-family:var(--display);font-weight:800;font-size:clamp(64px,8vw,92px);line-height:.8}
+.team h3{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:clamp(26px,2.8vw,34px);line-height:.9;margin:auto 0 12px;padding-top:60px;text-wrap:balance}
+.team p{margin:0 0 16px;font-size:12px;line-height:1.6}
+.team.t2 p{color:var(--orange-ink)}
+.team ul{list-style:none;margin:0 0 30px;padding:0;display:grid;gap:4px;font-size:10px;letter-spacing:.08em;text-transform:uppercase}
+.team li::before{content:"";display:inline-block;width:6px;height:6px;background:currentColor;margin-right:8px;vertical-align:1px}
+.team a{font-size:10px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid currentColor;align-self:flex-start;padding-bottom:2px}
+.team a:hover{border-bottom-width:3px}
+
+/* ---------- MEMBERS ---------- */
+.members{border-bottom:1px solid var(--rule)}
+.mhead{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;padding:22px 36px 16px;border-bottom:1px solid var(--rule)}
+.mhead h3{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:clamp(26px,3vw,34px);line-height:1;margin:0}
+.filters{display:flex;flex-wrap:wrap;border:1px solid var(--ink-soft)}
+.filters button{font:inherit;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:8px 14px;background:transparent;color:var(--ink);border:0;border-left:1px solid var(--ink-soft);cursor:pointer;border-radius:0}
+.filters button:first-child{border-left:0}
+.filters button:hover{background:var(--panel)}
+.filters button[aria-pressed="true"]{background:var(--black);color:var(--black-fg)}
+.people{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:22px 36px 30px}
+.person{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--rule);min-width:0}
+.person .photo{position:relative;aspect-ratio:1/1;max-width:100%;display:grid;place-items:center;overflow:hidden;border-bottom:1px solid var(--rule);background:var(--sheet);background-image:repeating-linear-gradient(45deg,transparent 0 10px,var(--grid-line) 10px 11px)}
+.person .photo > span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.person .photo img{width:100%;height:100%;object-fit:cover;display:block;filter:grayscale(1);transition:filter .2s}
+.person:hover .photo img{filter:none}
+.person .tchip{position:absolute;top:10px;left:10px;font-size:8px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px}
+.person[data-team="rnd"] .tchip{background:var(--black);color:var(--black-fg)}
+.person[data-team="software"] .tchip{background:var(--orange);color:var(--orange-ink)}
+.person[data-team="comms"] .tchip{background:var(--panel);color:var(--ink);border:1px solid var(--ink-soft)}
+.person .body{display:grid;gap:4px;padding:14px 16px 16px}
+.person h4{margin:0;font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:24px;line-height:1}
+.person .role{font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+.person .dept{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.person .plinks{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:8px}
+.person .plinks a{font-size:10px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border-bottom:1px solid currentColor}
+.person .plinks a:hover{color:var(--orange)}
+
+/* ---------- LOG ---------- */
+.log{padding:20px 36px 44px;border-bottom:1px solid var(--rule)}
+.log ol{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.entry{display:grid;grid-template-columns:120px 22px 1fr;gap:0 10px;align-items:stretch}
+.entry .when{font-size:9px;letter-spacing:.14em;text-transform:uppercase;padding-top:18px}
+.entry .rail{position:relative}
+.entry .rail::before{content:"";position:absolute;left:50%;top:22px;bottom:-14px;border-left:1px solid var(--ink-soft)}
+.entry:last-child .rail::before{display:none}
+.entry .rail b{position:absolute;left:50%;top:15px;width:9px;height:9px;transform:translateX(-50%);background:var(--ink)}
+.entry.latest .rail b{background:var(--orange);outline:1px solid var(--orange);outline-offset:2px}
+.entry.next .rail b{background:var(--sheet);border:1px solid var(--rule)}
+.card{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:12px 16px;border:1px solid var(--rule);background:var(--panel);min-width:0}
+.card h4{margin:0;font-family:var(--display);font-weight:700;font-size:clamp(19px,2.2vw,24px);text-transform:uppercase;line-height:1.1;flex:1;min-width:0}
+.chip{font-size:8px;letter-spacing:.14em;text-transform:uppercase;padding:3px 8px;border:1px solid var(--ink-soft)}
+.chip.hot{background:var(--orange);border-color:var(--orange);color:var(--orange-ink)}
+.card .res{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);text-decoration:none}
+.card .res:hover{color:var(--ink);text-decoration:underline}
+.entry.next .card{background:transparent;border-style:dashed;padding-block:16px}
+.entry.next .card span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+
+/* ---------- JOIN ---------- */
+.join-s{background:var(--orange);color:var(--orange-ink);display:grid;grid-template-columns:1.15fr 1fr;gap:40px;padding:30px 36px 34px}
+.join-s .left{display:flex;flex-direction:column;min-width:0}
+.join-s .label{color:var(--ink)}
+.join-s .display{font-size:clamp(56px,7.4vw,88px);margin:auto 0 30px;padding-top:10px}
+.join-s .date{font-size:9px;letter-spacing:.14em;text-transform:uppercase}
+form{display:grid;gap:14px;align-content:center;min-width:0;padding-top:30px}
+form label{display:grid;gap:6px;font-size:8px;letter-spacing:.16em;text-transform:uppercase}
+input,select{font:inherit;font-size:11px;letter-spacing:.06em;width:100%;padding:11px 12px;background:var(--panel);color:var(--ink);border:1px solid #9a4210;border-radius:0;appearance:none}
+input::placeholder{color:var(--placeholder);text-transform:uppercase}
+select{background-image:linear-gradient(45deg,transparent 50%,var(--ink) 50%),linear-gradient(135deg,var(--ink) 50%,transparent 50%);background-position:calc(100% - 16px) 50%,calc(100% - 11px) 50%;background-size:5px 5px;background-repeat:no-repeat;text-transform:uppercase}
+input:focus,select:focus{outline:2px solid var(--black);outline-offset:0}
+.apply{margin-top:4px;padding:14px;background:var(--black);color:var(--black-fg);border:0;font-family:var(--display);font-weight:800;font-size:22px;text-transform:uppercase;cursor:pointer;border-radius:0}
+.apply:hover{background:var(--black-fg);color:var(--black)}
+.apply:disabled{opacity:.5;cursor:not-allowed;background:var(--black);color:var(--black-fg)}
+.form-msg{font-size:10px;letter-spacing:.08em;text-transform:uppercase;min-height:1.6em;margin:0}
+
+/* ---------- FOOTER ---------- */
+footer{background:var(--black);color:var(--black-fg);margin-top:28px}
+:root[data-theme="dark"] footer{border-top:1px solid var(--rule)}
+footer .in{max-width:1100px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:30px 26px}
+footer .top{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+footer .logo{height:52px}
+footer nav{display:flex;gap:26px;flex-wrap:wrap}
+footer nav a{font-size:10px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none}
+footer nav a:hover{color:var(--orange)}
+footer .big{font-family:var(--display);font-weight:800;text-transform:uppercase;font-size:clamp(34px,6vw,64px);line-height:.88;color:#3a3a3a;margin:34px 0 30px;text-wrap:balance}
+footer .meta{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid #2a2a2a}
+footer .meta span{padding:12px 14px;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:#a8a6a0;border-left:1px solid #2a2a2a}
+footer .meta span:first-child{border-left:0}
+footer .meta span:last-child{text-align:right}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:860px){
+  .nav .tag{display:none}
+  .people{grid-template-columns:1fr 1fr}
+  .about{grid-template-columns:1fr}
+  .about .left{border-right:0;border-bottom:1px solid var(--rule)}
+  .teams{grid-template-columns:1fr}
+  .team{min-height:0}
+  .team h3{padding-top:40px}
+  .join-s{grid-template-columns:1fr;gap:0}
+  .join-s .display{margin-bottom:16px}
+}
+@media (max-width:560px){
+  .nav{flex-wrap:wrap}
+  .nav .brand{border-right:0;padding:16px}
+  .nav .links{margin-left:0;width:100%;border-top:1px solid var(--rule)}
+  .nav .links > a,.nav .links summary{padding:14px 12px;flex:1;justify-content:center}
+  .nav .links > a:first-child{border-left:0}
+  .nav .links > details{flex:1}
+  .nav .join{font-size:17px!important;padding:0 14px!important}
+  .nav .links > button{flex:0 0 52px;padding:0}
+  .nav details .menu{left:auto;right:-1px}
+  .hero,.about > *,.shead,.log,.join-s,.mhead,.people,.strip .ctas,.strip .badge{padding-left:18px;padding-right:18px}
+  .strip .ctas .btn{flex:1}
+  .strip .badge{flex:1 1 100%}
+  .people{gap:10px}
+  .person .body{padding:12px}
+  .person h4{font-size:20px}
+  .specs > div{grid-template-columns:1fr;gap:2px}
+  .shead{flex-direction:column;align-items:flex-start}
+  .shead .label{padding-bottom:0}
+  .entry{grid-template-columns:16px 1fr;gap:0 10px}
+  .entry .when{grid-column:2;padding-top:0}
+  .entry .rail{grid-row:1/3;grid-column:1}
+  .entry .rail b{top:4px}
+  .entry .rail::before{top:10px}
+  .card{grid-column:2}
+  footer .meta{grid-template-columns:1fr}
+  footer .meta span{border-left:0!important;border-top:1px solid #2a2a2a}
+  footer .meta span:first-child{border-top:0}
+  footer .meta span:last-child{text-align:left}
+}
+</style>
+
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="grid-logo" viewBox="0 0 660 179">
+      <path fill="currentColor" d="M0,0H172V60H57V118H113L86,90H172V179H0Z M202,0H345L371,60H202Z M202,90H371L345,120L371,179H318L291,120H253V179H202Z M403,0H461V60H403Z M403,90H461V179H403Z M489,0H660V179H489V90H574L548,118H603V60H489Z"/>
+      <rect x="57" y="72.5" width="546" height="5" fill="#e8641c"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="wrap">
+<div class="sheet">
+
+  <!-- NAV -->
+  <header class="nav">
+    <a class="brand" href="#top" aria-label="G.R.I.D home"><svg class="logo" role="img" aria-label="GRID"><use href="#grid-logo"/></svg></a>
+    <div class="tag">NUST PNEC / Student Society</div>
+    <nav class="links" aria-label="Primary">
+      <a href="#about">About</a>
+      <details>
+        <summary>Teams <span class="caret">▼</span></summary>
+        <div class="menu">
+          <a href="#team-rnd">01 / Research and Development</a>
+          <a href="#team-software">02 / Software</a>
+          <a href="#team-comms">03 / Marketing and Comms</a>
+        </div>
+      </details>
+      <a href="#log">Log</a>
+      <button type="button" id="theme-toggle" aria-label="Switch to dark mode" title="Switch to dark mode"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"/></svg></button>
+      <a class="join" href="#join">Join</a>
+    </nav>
+  </header>
+
+  <!-- SHEET 00 / COVER -->
+  <section class="hero" id="top">
+    <div class="meta"><span class="label">NUST PNEC</span><span class="label">Rev. A</span></div>
+    <h1 class="display">Research. Build. <span class="ship">Ship.</span></h1>
+    <p class="intro">A student society for people who research, code and ship. Open to every department.</p>
+    <div class="ruler" aria-hidden="true"><i></i><span>G.R.I.D</span><i></i></div>
+  </section>
+
+  <div class="strip">
+    <div class="ctas">
+      <a class="btn primary" href="#join">Join G.R.I.D</a>
+      <a class="btn" href="#log">See the log</a>
+    </div>
+    <div class="badge">
+      <span class="label">NUST PNEC</span>
+      <span class="display">Student Society</span>
+    </div>
+  </div>
+
+  <!-- SHEET 01 / ABOUT -->
+  <section class="about" id="about">
+    <div class="left">
+      <h2 class="display">Who we are</h2>
+    </div>
+    <div class="right">
+      <p class="lede">A new society for people who want to research, code and ship real things.</p>
+      <dl class="specs">
+        <div><dt>Full name</dt><dd>Group of Research, Innovation and Development</dd></div>
+        <div><dt>Institution</dt><dd>NUST PNEC</dd></div>
+        <div><dt>Open to</dt><dd>Every department</dd></div>
+        <div><dt>Focus</dt><dd>Software and research</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- SHEET 02 / TEAMS -->
+  <section id="teams">
+    <div class="shead"><h2 class="display">Three teams</h2></div>
+    <div class="teams">
+      <article class="team t1" id="team-rnd">
+        <div class="num">01</div>
+        <h3>Research and Development</h3>
+        <p>Takes on open problems across every department. The team reads the literature, runs experiments and builds working prototypes, then writes up what it finds for competitions, conferences and journals.</p>
+        <ul><li>Research papers and reviews</li><li>Prototypes and experiments</li><li>Robotics and embedded systems</li></ul>
+        <a href="#members" data-show="rnd">Meet the team</a>
+      </article>
+      <article class="team t2" id="team-software">
+        <div class="num">02</div>
+        <h3>Software</h3>
+        <p>Designs, builds and maintains the software G.R.I.D ships, from web and mobile apps to the tools behind research projects. It also forms the society's hackathon teams and runs code reviews.</p>
+        <ul><li>Web and mobile apps</li><li>AI and data tools</li><li>Hackathons and open source</li></ul>
+        <a href="#members" data-show="software">Meet the team</a>
+      </article>
+      <article class="team t3" id="team-comms">
+        <div class="num">03</div>
+        <h3>Marketing and Comms</h3>
+        <p>Tells people what G.R.I.D is building. The team runs social media, designs posters and event material, writes up project launches and handles outreach to sponsors and other societies.</p>
+        <ul><li>Social media and content</li><li>Design and branding</li><li>Events, sponsors and outreach</li></ul>
+        <a href="#members" data-show="comms">Meet the team</a>
+      </article>
+    </div>
+
+    <div class="members" id="members">
+      <div class="mhead">
+        <h3>Meet the team</h3>
+        <div class="filters" role="group" aria-label="Show members by team">
+          <button type="button" id="fl-all" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" id="fl-rnd" data-filter="rnd" aria-pressed="false">R&amp;D</button>
+          <button type="button" id="fl-software" data-filter="software" aria-pressed="false">Software</button>
+          <button type="button" id="fl-comms" data-filter="comms" aria-pressed="false">Comms</button>
+        </div>
+      </div>
+      <div class="people">
+        <!--
+          Members load from /api/members (add them through the admin API, see README).
+          The cards below are placeholders: they only show while the API has no members,
+          and they are what you see if you open this file without the server.
+          Photos: square works best. They show in greyscale and turn to colour on hover.
+        -->
+        <article class="person" data-team="rnd">
+          <div class="photo"><span>[Photo]</span><b class="tchip">01 / R&amp;D</b></div>
+          <div class="body"><h4>[Name]</h4><div class="role">[Team lead]</div><div class="dept">[Department, batch]</div>
+            <div class="plinks"><a href="#members">LinkedIn</a><a href="#members">GitHub</a></div></div>
+        </article>
+        <article class="person" data-team="software">
+          <div class="photo"><span>[Photo]</span><b class="tchip">02 / Software</b></div>
+          <div class="body"><h4>[Name]</h4><div class="role">[Team lead]</div><div class="dept">[Department, batch]</div>
+            <div class="plinks"><a href="#members">LinkedIn</a><a href="#members">GitHub</a></div></div>
+        </article>
+        <article class="person" data-team="comms">
+          <div class="photo"><span>[Photo]</span><b class="tchip">03 / Comms</b></div>
+          <div class="body"><h4>[Name]</h4><div class="role">[Team lead]</div><div class="dept">[Department, batch]</div>
+            <div class="plinks"><a href="#members">LinkedIn</a><a href="#members">Instagram</a></div></div>
+        </article>
+        <article class="person" data-team="rnd">
+          <div class="photo"><span>[Photo]</span><b class="tchip">01 / R&amp;D</b></div>
+          <div class="body"><h4>[Name]</h4><div class="role">[Member]</div><div class="dept">[Department, batch]</div>
+            <div class="plinks"><a href="#members">LinkedIn</a></div></div>
+        </article>
+        <article class="person" data-team="software">
+          <div class="photo"><span>[Photo]</span><b class="tchip">02 / Software</b></div>
+          <div class="body"><h4>[Name]</h4><div class="role">[Member]</div><div class="dept">[Department, batch]</div>
+            <div class="plinks"><a href="#members">GitHub</a></div></div>
+        </article>
+        <article class="person" data-team="comms">
+          <div class="photo"><span>[Photo]</span><b class="tchip">03 / Comms</b></div>
+          <div class="body"><h4>[Name]</h4><div class="role">[Member]</div><div class="dept">[Department, batch]</div>
+            <div class="plinks"><a href="#members">Instagram</a></div></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- SHEET 03 / LOG -->
+  <section id="log">
+    <div class="shead"><h2 class="display">The log</h2></div>
+    <div class="log">
+      <ol>
+        <li class="entry latest">
+          <div class="when">[Month Year]</div><div class="rail"><b></b></div>
+          <div class="card"><span class="chip hot">Hackathon</span><h4>[Milestone title]</h4><a class="res" href="#log">[Result / Link]</a></div>
+        </li>
+        <li class="entry">
+          <div class="when">[Month Year]</div><div class="rail"><b></b></div>
+          <div class="card"><span class="chip">Project</span><h4>[Milestone title]</h4><a class="res" href="#log">[Result / Link]</a></div>
+        </li>
+        <li class="entry">
+          <div class="when">[Month Year]</div><div class="rail"><b></b></div>
+          <div class="card"><span class="chip">Research</span><h4>[Milestone title]</h4><a class="res" href="#log">[Result / Link]</a></div>
+        </li>
+        <li class="entry">
+          <div class="when">[Month Year]</div><div class="rail"><b></b></div>
+          <div class="card"><span class="chip">Event</span><h4>[Milestone title]</h4><a class="res" href="#log">[Result / Link]</a></div>
+        </li>
+        <li class="entry next">
+          <div class="when"></div><div class="rail"><b></b></div>
+          <div class="card"><span>[Next entry]</span></div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- SHEET 04 / JOIN -->
+  <section class="join-s" id="join">
+    <div class="left">
+      <h2 class="display">Join G.R.I.D.</h2>
+      <div class="date" id="join-date">[Applications open / Closing date]</div>
+    </div>
+    <form id="apply-form" novalidate>
+      <label for="f-name">Name<input id="f-name" name="name" type="text" placeholder="[Full name]" autocomplete="name" required></label>
+      <label for="f-email">Email<input id="f-email" name="email" type="email" placeholder="[Email address]" autocomplete="email" required></label>
+      <label for="f-dept">Department
+        <select id="f-dept" name="department" required>
+          <option value="" selected disabled>Select department</option>
+          <option>Computer Science</option>
+          <option>Electrical Engineering</option>
+          <option>Mechanical Engineering</option>
+          <option>Naval Architecture</option>
+        </select>
+      </label>
+      <button class="apply" type="submit" id="f-submit">Apply now</button>
+      <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+</div>
+</div>
+
+<!-- SHEET 05 / FOOTER -->
+<footer>
+  <div class="in">
+    <div class="top">
+      <svg class="logo" role="img" aria-label="GRID"><use href="#grid-logo"/></svg>
+      <nav aria-label="Footer">
+        <a href="#about">About</a><a href="#teams">Teams</a><a href="#log">Log</a><a href="#join" id="f-contact">Contact</a>
+      </nav>
+    </div>
+    <div class="big">Group of Research, Innovation and Development</div>
+    <div class="meta">
+      <span>A student society of NUST PNEC</span>
+      <span>© <span id="yr">2026</span> G.R.I.D</span>
+      <span id="f-handle">[@handle]</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // Theme toggle (the starting theme is set by the small script in <head>)
+  var root = document.documentElement, themeBtn = document.getElementById('theme-toggle'), themeMeta = document.querySelector('meta[name="theme-color"]');
+  function paintTheme(t){
+    root.dataset.theme = t;
+    var next = t === 'dark' ? 'light' : 'dark';
+    themeBtn.setAttribute('aria-label', 'Switch to ' + next + ' mode');
+    themeBtn.title = 'Switch to ' + next + ' mode';
+    if (themeMeta) themeMeta.content = t === 'dark' ? '#121314' : '#c9cbcd';
+  }
+  paintTheme(root.dataset.theme === 'dark' ? 'dark' : 'light');
+  themeBtn.addEventListener('click', function(){
+    var t = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    paintTheme(t);
+    try { localStorage.setItem('grid-theme', t); } catch (e) {}
+  });
+  if (window.matchMedia) {
+    var mq = matchMedia('(prefers-color-scheme: dark)');
+    var follow = function(e){
+      var saved = null;
+      try { saved = localStorage.getItem('grid-theme'); } catch (x) {}
+      if (!saved) paintTheme(e.matches ? 'dark' : 'light');   // only follow the system until the visitor picks one
+    };
+    if (mq.addEventListener) mq.addEventListener('change', follow); else if (mq.addListener) mq.addListener(follow);
+  }
+
+  // Close the Teams dropdown after picking a team or clicking elsewhere
+  var dd = document.querySelector('.nav details');
+  dd.querySelectorAll('a').forEach(function(a){ a.addEventListener('click', function(){ dd.open = false; }); });
+  document.addEventListener('click', function(e){ if (!dd.contains(e.target)) dd.open = false; });
+
+  // Member filter: buttons and each team's "Meet the team" link
+  var fbtns = document.querySelectorAll('.filters button');
+  function setFilter(t){
+    document.querySelectorAll('.person').forEach(function(p){ p.hidden = !(t === 'all' || p.dataset.team === t); });
+    fbtns.forEach(function(b){ b.setAttribute('aria-pressed', b.dataset.filter === t ? 'true' : 'false'); });
+  }
+  fbtns.forEach(function(b){ b.addEventListener('click', function(){ setFilter(b.dataset.filter); }); });
+  document.querySelectorAll('[data-show]').forEach(function(a){ a.addEventListener('click', function(){ setFilter(a.dataset.show); }); });
+  document.querySelectorAll('.nav .menu a').forEach(function(a){ a.addEventListener('click', function(){ setFilter('all'); }); });
+
+  // ---- API ----
+  // Everything below is progressive: if the API is unreachable (or has nothing yet),
+  // the placeholder markup above stays exactly as designed.
+  var form = document.getElementById('apply-form'), msg = document.getElementById('form-msg');
+
+  function api(path, opts){
+    return fetch('/api' + path, opts).then(function(r){
+      return r.json().catch(function(){ return {}; }).then(function(d){ return { ok: r.ok, status: r.status, data: d }; });
+    });
+  }
+  function el(tag, cls, text){
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;   // textContent only: nothing from the API is parsed as HTML
+    return n;
+  }
+  function httpUrl(u){ return /^https?:\/\//i.test(u) ? u : '#'; }
+  function external(a, url){ a.href = httpUrl(url); a.target = '_blank'; a.rel = 'noopener noreferrer'; return a; }
+
+  var TEAM_CHIP = { rnd: '01 / R&D', software: '02 / Software', comms: '03 / Comms' };
+  var LINK_NAME = { linkedin: 'LinkedIn', github: 'GitHub', instagram: 'Instagram' };
+  function initials(n){ return n.split(/\s+/).slice(0, 2).map(function(w){ return w.charAt(0); }).join('').toUpperCase(); }
+
+  function renderMembers(list){
+    var box = document.querySelector('.people'), on = document.querySelector('.filters [aria-pressed="true"]');
+    box.textContent = '';
+    list.forEach(function(m){
+      var card = el('article', 'person'); card.dataset.team = m.team;
+      var photo = el('div', 'photo');
+      if (m.photo) { var img = el('img'); img.src = m.photo; img.alt = m.name; img.loading = 'lazy'; photo.appendChild(img); }
+      else photo.appendChild(el('span', null, initials(m.name)));
+      photo.appendChild(el('b', 'tchip', TEAM_CHIP[m.team]));
+      var body = el('div', 'body');
+      body.appendChild(el('h4', null, m.name));
+      if (m.role) body.appendChild(el('div', 'role', m.role));
+      if (m.dept) body.appendChild(el('div', 'dept', m.dept));
+      var keys = Object.keys(LINK_NAME).filter(function(k){ return m.links && m.links[k]; });
+      if (keys.length) {
+        var pl = el('div', 'plinks');
+        keys.forEach(function(k){ pl.appendChild(external(el('a', null, LINK_NAME[k]), m.links[k])); });
+        body.appendChild(pl);
+      }
+      card.appendChild(photo); card.appendChild(body); box.appendChild(card);
+    });
+    setFilter(on ? on.dataset.filter : 'all');
+  }
+
+  function renderLog(list){
+    var ol = document.querySelector('.log ol');
+    ol.textContent = '';
+    list.forEach(function(e, i){
+      var li = el('li', 'entry' + (i === 0 ? ' latest' : ''));
+      li.appendChild(el('div', 'when', e.when));
+      var rail = el('div', 'rail'); rail.appendChild(document.createElement('b')); li.appendChild(rail);
+      var card = el('div', 'card');
+      card.appendChild(el('span', 'chip' + (i === 0 ? ' hot' : ''), e.kind));
+      card.appendChild(el('h4', null, e.title));
+      if (e.result_label) {
+        card.appendChild(e.result_url ? external(el('a', 'res', e.result_label), e.result_url) : el('span', 'res', e.result_label));
+      }
+      li.appendChild(card); ol.appendChild(li);
+    });
+    var next = el('li', 'entry next');
+    next.appendChild(el('div', 'when'));
+    var nrail = el('div', 'rail'); nrail.appendChild(document.createElement('b')); next.appendChild(nrail);
+    var ncard = el('div', 'card'); ncard.appendChild(el('span', null, 'Next entry')); next.appendChild(ncard);
+    ol.appendChild(next);
+  }
+
+  api('/site').then(function(r){
+    if (!r.ok) return;
+    var s = r.data;
+    if (s.applications_label) document.getElementById('join-date').textContent = s.applications_label;
+    if (s.handle) document.getElementById('f-handle').textContent = s.handle;
+    if (s.contact_email) document.getElementById('f-contact').href = 'mailto:' + s.contact_email;
+    if (s.departments && s.departments.length) {
+      var sel = form.department, first = sel.options[0];
+      sel.textContent = ''; sel.appendChild(first);
+      s.departments.forEach(function(d){ var o = el('option', null, d); o.value = d; sel.appendChild(o); });
+    }
+    if (!s.applications_open) { document.getElementById('f-submit').disabled = true; msg.textContent = 'Applications are closed.'; }
+  }).catch(function(){});
+  api('/members').then(function(r){ if (r.ok && r.data.length) renderMembers(r.data); }).catch(function(){});
+  api('/log').then(function(r){ if (r.ok && r.data.length) renderLog(r.data); }).catch(function(){});
+
+  // Application form: validate here, then POST to /api/applications
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    var name = form.name.value.trim(), email = form.email.value.trim(), dept = form.department.value;
+    if (!name) { msg.textContent = 'Enter your full name.'; form.name.focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { msg.textContent = 'Enter a valid email address.'; form.email.focus(); return; }
+    if (!dept) { msg.textContent = 'Select your department.'; form.department.focus(); return; }
+    var btn = document.getElementById('f-submit');
+    btn.disabled = true; msg.textContent = 'Sending...';
+    api('/applications', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: name, email: email, department: dept })
+    }).then(function(r){
+      if (r.ok) { msg.textContent = 'Thanks, ' + name.split(' ')[0] + '. Application received.'; form.reset(); return; }
+      var d = r.data && typeof r.data.detail === 'string' ? r.data.detail : '';
+      msg.textContent = d || 'Check your details and try again.';
+    }).catch(function(){
+      msg.textContent = 'Could not reach the server. Try again in a moment.';
+    }).then(function(){
+      // stay disabled if the server says applications are closed
+      if (!/closed/i.test(msg.textContent)) btn.disabled = false;
+    });
+  });
+})();
+</script>
+
+</body></html>
